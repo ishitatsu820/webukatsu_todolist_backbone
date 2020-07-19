@@ -6,41 +6,28 @@ var source = require('vinyl-source-stream');
 
 
 // gulpタスクの作成
-function build(done) {
+gulp.task('build', function(){
   browserify({
     entries: ['src/app.js'] // ビルド元のファイルを指定
   }).bundle()
     .pipe(source('bundle.js')) // 出力ファイル名を指定
     .pipe(gulp.dest('dist/')); // 出力ディレクトリを指定
-    done();
-}
-
-
-function browser_sync(done) {
+});
+gulp.task('browser-sync', function() {
   browserSync.init({
     server: {
       baseDir: "./", // 対象ディレクトリ
       index: "index.html" //indexファイル名
     }
   });
-  done();
-    
-}
-  
-function bs_reload(done) {
+});
+gulp.task('bs-reload', function () {
   browserSync.reload();
-  done();
-}
-  
-exports.build = build;
-exports.browser_sync = browser_sync;
-exports.bs_reload = browser_sync;
-
+});
 
 // Gulpを使ったファイルの監視
-function watch() {
-  gulp.watch('./src/*.js', build);
-  gulp.watch("./*.html", bs_reload);
-  gulp.watch("./dist/*.+(js|css)", bs_reload);
-}
-exports.watch = watch;
+gulp.task('default', gulp.parallel('build', 'browser-sync'), function(){
+  gulp.watch('./src/*.js', gulp.task('build'));
+  gulp.watch("./*.html", gulp.task('bs-reload'));
+  gulp.watch("./dist/*.+(js|css)", gulp.task('bs-reload'));
+});
