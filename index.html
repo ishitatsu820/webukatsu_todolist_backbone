@@ -7,37 +7,36 @@
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc" crossorigin="anonymous">
 </head>
 <body>
-  <div class="main" id="app">
+<div class="main" id="app">
 
-    <form class="form">
-      <div class="inputArea">
-        <input type="text" class="inputText js-get-val" value="" placeholder="ここにTODO内容を書く">
-        <span class="error js-toggle-error">入力が空です。。。。</span>
-      </div>
-      <button class="btn js-add-todo">TODOを追加</button>
-    </form>
-  
-    <div class="searchBox">
-      <i class="fa fa-search searchBox__icon" aria-hidden="true"></i>
-      <input type="text" class="searchBox__input js-search"
-             value="" placeholder="ここに絞り込みたいキーワードを入力する">
+  <form class="form">
+    <div class="inputArea">
+      <input type="text" class="inputText js-get-val" value="" placeholder="ここにTODO内容を書く">
+      <span class="error js-toggle-error">入力が空です。。。。</span>
     </div>
+    <button class="btn js-add-todo">TODOを追加</button>
+  </form>
+  
+  <div class="searchBox">
+    <i class="fa fa-search searchBox__icon" aria-hidden="true"></i>
+    <input type="text" class="searchBox__input js-search" value="" placeholder="ここに絞り込みたいキーワードを入力する">
+  </div>
 
-    <ul class="list js-todo_list"></ul>
+  <ul class="list js-todo_list"></ul>
 
-    <script type="text/template" id="template-list-item">
-      <li class="list__item js-todo_list-item <% if (isDone) { %>list__item--done<% } %>">
-        <i class="far <% if (isDone){ %> fa-check-square <% }else{ %> fa-square <% } %> icon-check js-toggle-done" aria-hidden="true"></i>
-        <% if (!editMode) { %>
+  <script type="text/template" id="template-list-item">
+    <li class="list__item js-todo_list-item <% if(isDone){ %>list__item--done<% } %>">
+        <i class="far <% if(isDone){ %> fa-check-square <% }else{ %> fa-square <% } %> icon-check js-toggle-done" aria-hidden="true"></i>
+        <% if(!editMode) { %>
         <span class="js-todo_list-text"><%= text %></span>
         <% }else{ %>
         <input type="text" value="<%= text %>" class="editText js-todo_list-editForm">
         <% } %>
         <i class="far fa-trash-alt icon-trash js-click-trash" aria-hidden="true"></i>
-      </li>
-    </script>
+    </li>
+  </script>
 
-  </div>
-  <script src="dist/bundle.js"></script>
+</div>
+<script src="dist/bundle.js"></script>
 </body>
 </html>
