@@ -9,12 +9,7 @@
 <body>
 <div class="main" id="app">
 
-  <form class="form">
-    <div class="inputArea">
-      <input type="text" class="inputText js-get-val" value="" placeholder="ここにTODO内容を書く">
-      <span class="error js-toggle-error">入力が空です。。。。</span>
-    </div>
-    <button class="btn js-add-todo">TODOを追加</button>
+  <form class="form js-form">
   </form>
   
   <div class="searchBox">
@@ -34,6 +29,15 @@
         <% } %>
         <i class="far fa-trash-alt icon-trash js-click-trash" aria-hidden="true"></i>
     </li>
+  </script>
+  <script type="text/template" id="template-form">
+    <div class="inputArea">
+      <input type="text" class="inputText js-get-val" value="" placeholder="ここにTODO内容を書く">
+      <% if(hasError){ %>
+      <span class="error"><%= errorMsg %></span>
+      <% } %>
+    </div>
+    <button class="btn js-add-todo">TODOを追加</button>
   </script>
 
 </div>

@@ -14809,7 +14809,7 @@ var $ = require('../node_modules/jquery/dist/jquery');
 var _ = require('../node_modules/underscore/underscore');
 
 //=============================================
-// ModelとViewの連携でItemを作っていくぅ
+// Model
 //=============================================
 
 var Item = Backbone.Model.extend({
@@ -14819,6 +14819,36 @@ var Item = Backbone.Model.extend({
     editMode: false
   }
 });
+
+var Form = Backbone.Model.extend({
+  defaults: {
+    val: '',
+    hasError: false,
+    errorMsg: ''
+  }
+}) ;
+
+//インスタンス化
+var form = new Form();
+
+//=============================================
+// Collection
+//=============================================
+// BackboneにはControllerはない
+// CollectionはModelを複数扱うためのオブジェクト
+
+var LIST = Backbone.Collection.extend({
+  model: Item
+});
+
+var item1  = new Item({text: 'sample 001'});
+var item2  = new Item({text: 'sample 002'});
+var list = new LIST([item1, item2]);
+
+
+//=============================================
+// View
+//=============================================
 
 var ItemView = Backbone.View.extend({
   template: _.template($('#template-list-item').html()),
@@ -14862,27 +14892,6 @@ var ItemView = Backbone.View.extend({
 });
 
 
-//=============================================
-// Collectionの使い方
-//=============================================
-// BackboneにはControllerはない
-// CollectionはModelを複数扱うためのオブジェクト
-
-var LIST = Backbone.Collection.extend({
-  model: Item
-});
-
-var item1  = new Item({text: 'sample 001'});
-var item2  = new Item({text: 'sample 002'});
-var list = new LIST([item1, item2]);
-
-list.each(function(e, i) {
-  console.log('[' + i + '] ' + e.get('text'));
-});
-
-//=============================================
-// CollectionとModelとViewの連携
-//=============================================
 var ListView = Backbone.View.extend({
   el: $('.js-todo_list'),
   collection: list,
@@ -14893,6 +14902,7 @@ var ListView = Backbone.View.extend({
   },
   addItem: function (text) {
     var model = new Item({text: text});
+    console.log(text)
     this.collection.add(model);
   },
   appendItem: function (model) {
@@ -14910,6 +14920,30 @@ var ListView = Backbone.View.extend({
 });
 
 var listView = new ListView({collection: list});
-itemView.addItem('sample02');
-listView.addItem('sample03');
+
+var FormView = Backbone.View.extend({
+  el: $('.js-form'),
+  template: _.template($('#template-form').html()),
+  model: form,
+  events: {
+    'click .js-add-todo': 'addTodo'
+  },
+  initialize: function(){
+    _.bindAll(this, 'render', 'addTodo');
+    this.model.bind('change', this.render);
+    this.render();
+  },
+  addTodo: function(e){
+    e.preventDefault();
+    this.model.set({val: $('.js-get-val').val()});
+    listView.addItem(this.model.get('val')); 
+  },
+  render: function(){
+    var template = this.template(this.model.attributes)
+    this.$el.html(template);
+    return this;
+  }
+});
+new FormView();
+
 },{"../node_modules/backbone/backbone":1,"../node_modules/jquery/dist/jquery":2,"../node_modules/underscore/underscore":3}]},{},[4]);
