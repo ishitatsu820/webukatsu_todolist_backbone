@@ -14816,7 +14816,8 @@ var Item = Backbone.Model.extend({
   defaults: {
     text: '',
     isDone: false,
-    editMode: false
+    editMode: false,
+    isSearch: false
   }
 });
 
@@ -14828,9 +14829,14 @@ var Form = Backbone.Model.extend({
   }
 }) ;
 
+var Search = Backbone.Model.extend({
+  defaults:{
+  searchText:'',
+  }
+  });
 //インスタンス化
 var form = new Form();
-
+var search = new Search();
 //=============================================
 // Collection
 //=============================================
@@ -14869,7 +14875,6 @@ var ItemView = Backbone.View.extend({
   },
   toggleDone: function () {
     this.model.set({isDone: !this.model.get('isDone')});
-
   },
   remove: function (){
     this.$el.remove();
@@ -14888,7 +14893,11 @@ var ItemView = Backbone.View.extend({
     var template = this.template(this.model.attributes);
     this.$el.html(template);
     return this;
-  }
+  },
+  // toggleSearch: function(result){
+  //   this.model.set({isSearch: result});
+  //   console.log(this.model.get('isSearch'));
+  // }
 });
 
 
@@ -14896,7 +14905,7 @@ var ListView = Backbone.View.extend({
   el: $('.js-todo_list'),
   collection: list,
   initialize: function (){
-    _.bindAll(this, 'render', 'addItem', 'appendItem');
+    _.bindAll(this, 'render', 'addItem', 'appendItem', 'searchItem');
     this.collection.bind('add', this.appendItem);
     this.render();
   },
@@ -14916,6 +14925,20 @@ var ListView = Backbone.View.extend({
       that.appendItem(model);
     });
     return this;
+  },
+  searchItem: function(searchText){
+    
+    this.collection.each(function(model, i){
+      var text = model.get('text');
+      if(text && text.match(new RegExp('^' + searchText)) ){
+        console.log('match');
+        model.set({isSearch: false});
+      }else{
+        model.set({isSearch: true});
+      }
+      
+    })
+    
   }
 });
 
@@ -14946,4 +14969,40 @@ var FormView = Backbone.View.extend({
 });
 new FormView();
 
+var SearchView = Backbone.View.extend({
+  el: $('.js-search'),
+  template: _.template($('#template-search').html()),
+  model: search,
+  collection: list,
+  item: null,
+  events: {
+    'keyup .js-get-search' : 'search'
+  },
+  initialize: function(){
+    _.bindAll(this, 'render', 'search');
+    this.render();
+  },
+  search: function(e){
+    e.preventDefault();
+    this.model.set({searchText : $('.js-get-search').val()});
+    var searchText  = this.model.get('searchText');
+    console.log('検索欄に入力した値：' + searchText);
+    listView.searchItem(searchText);
+    // $('.js-todo_list-item').show().each(function(i, elm){
+    //   var text  = $('elm').data('text');
+    //   if(text && text.match(new RegExp('^' + searchText)) ){
+    //     console.log('elm');
+    //     return true;
+    //   }
+    //   console.log('unmatch');
+    // })
+  },
+  render: function(){
+    var template = this.template(this.model.attributes)
+    this.$el.html(template);
+    return this;
+  }
+
+})
+new SearchView();
 },{"../node_modules/backbone/backbone":1,"../node_modules/jquery/dist/jquery":2,"../node_modules/underscore/underscore":3}]},{},[4]);
